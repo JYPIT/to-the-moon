@@ -77,6 +77,7 @@ function App() {
     <>
       <ThemeProvider theme={isDark ? darkTheme : lightTheme}>
         <GlobalStyle />
+        {/* TODO: Header에 Home 버튼 추가 */}
         <Router />
         <ReactQueryDevtools initialIsOpen={true} />
       </ThemeProvider>

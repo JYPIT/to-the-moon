@@ -137,8 +137,7 @@ interface PriceData {
   };
 }
 
-interface ICoinProps {}
-function Coin({}: ICoinProps) {
+function Coin() {
   const { coinId } = useParams<keyof RouteParams>() as RouteParams;
   const { state } = useLocation() as RouteState;
   const priceMatch = useMatch("/:coinId/price");
@@ -148,6 +147,7 @@ function Coin({}: ICoinProps) {
     ["info", coinId],
     () => fetchCoinInfo(coinId as string)
   );
+
   const { isLoading: tickersLoading, data: tickersData } = useQuery<PriceData>(
     ["tickers", coinId],
     () => fetchCoinTickers(coinId as string),
@@ -156,7 +156,6 @@ function Coin({}: ICoinProps) {
     }
   );
   const loading = infoLoading || tickersLoading;
-
   return (
     <Container>
       <Helmet>
@@ -168,6 +167,7 @@ function Coin({}: ICoinProps) {
         <Title>
           {state?.name ? state.name : loading ? "Loading..." : infoData?.name}
         </Title>
+        <Link to={`/`}>🏠</Link>
       </Header>
       {loading ? (
         <Loader>Loading...</Loader>
@@ -209,7 +209,18 @@ function Coin({}: ICoinProps) {
           </Tabs>
           <Routes>
             <Route path="chart" element={<Chart coinId={coinId} />} />
-            <Route path="price" element={<Price />} />
+            <Route
+              path="price"
+              element={
+                <Price
+                  coinId={coinId}
+                  coinPrice={tickersData?.quotes.USD.price as number}
+                  coinChange24h={
+                    tickersData?.quotes.USD.percent_change_24h as number
+                  }
+                />
+              }
+            />
           </Routes>
         </>
       )}
